@@ -476,7 +476,9 @@ class IQKeyboardManager: NSObject, UIGestureRecognizerDelegate {
         var oldKBSize = kbSize
         
         //  Getting UIKeyboardSize.
-        kbSize = info.objectForKey(UIKeyboardFrameEndUserInfoKey)?.CGRectValue().size
+        let screenRect = UIScreen.mainScreen().bounds
+        let kbFrame : CGRect = (info.objectForKey(UIKeyboardFrameEndUserInfoKey) as NSValue).CGRectValue()
+        kbSize = kbFrame.size
         
         //If it's iOS8 then we should do calculations according to portrait orientations.
         var interfaceOrientation = (IQ_IS_IOS8_OR_GREATER) ? UIInterfaceOrientation.Portrait : self.keyWindow().topMostController().interfaceOrientation
@@ -485,12 +487,16 @@ class IQKeyboardManager: NSObject, UIGestureRecognizerDelegate {
         switch (interfaceOrientation)
             {
         case UIInterfaceOrientation.LandscapeLeft:
+            kbSize.width = screenRect.size.width - kbFrame.origin.x
             kbSize.width += keyboardDistanceFromTextField
         case UIInterfaceOrientation.LandscapeRight:
+            kbSize.width = screenRect.size.width - kbFrame.origin.x
             kbSize.width += keyboardDistanceFromTextField
         case UIInterfaceOrientation.Portrait:
+            kbSize.height = screenRect.size.height - kbFrame.origin.y;
             kbSize.height += keyboardDistanceFromTextField
         case UIInterfaceOrientation.PortraitUpsideDown:
+            kbSize.height = screenRect.size.height - kbFrame.origin.y;
             kbSize.height += keyboardDistanceFromTextField
         default :   break
         }
@@ -500,7 +506,7 @@ class IQKeyboardManager: NSObject, UIGestureRecognizerDelegate {
         {
             //If _textFieldView is inside UITableViewController then let UITableViewController to handle it (Bug ID: #37) (Bug ID: #76) See note:- https://developer.apple.com/Library/ios/documentation/StringsTextFonts/Conceptual/TextAndWebiPhoneOS/KeyboardManagement/KeyboardManagement.html. If it is UIAlertView textField then do not affect anything (Bug ID: #70).
             if _textFieldView != nil && _textFieldView.viewController()?.isKindOfClass(UITableViewController) == false && _textFieldView.isAlertViewTextField() == false {
-                [self adjustFrame];
+                self.adjustFrame()
             }
         }
     }
@@ -630,7 +636,7 @@ class IQKeyboardManager: NSObject, UIGestureRecognizerDelegate {
         
         //If _textFieldView is inside UITableViewController then let UITableViewController to handle it (Bug ID: #37) (Bug ID: #76) See note:- https://developer.apple.com/Library/ios/documentation/StringsTextFonts/Conceptual/TextAndWebiPhoneOS/KeyboardManagement/KeyboardManagement.html. If it is UIAlertView textField then do not affect anything (Bug ID: #70).
         if _textFieldView != nil && _textFieldView.viewController()?.isKindOfClass(UITableViewController) == false && _textFieldView.isAlertViewTextField() == false {
-            [self adjustFrame];
+            self.adjustFrame()
         }
     }
     

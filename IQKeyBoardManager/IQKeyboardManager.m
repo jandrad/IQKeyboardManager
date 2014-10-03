@@ -602,7 +602,9 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
     CGSize oldKBSize = kbSize;
     
     //  Getting UIKeyboardSize.
-    kbSize = [[aNotification userInfo][UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
+    CGRect screenRect = [UIScreen mainScreen].bounds;
+    CGRect kbFrame = [[aNotification userInfo][UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    kbSize = kbFrame.size;
     
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -613,15 +615,19 @@ NSInteger const kIQPreviousNextButtonToolbarTag     =   -1005;
     switch (interfaceOrientation)
     {
         case UIInterfaceOrientationLandscapeLeft:
+            kbSize.width = screenRect.size.width - kbFrame.origin.x;
             kbSize.width += _keyboardDistanceFromTextField;
             break;
         case UIInterfaceOrientationLandscapeRight:
+            kbSize.width = screenRect.size.width - kbFrame.origin.x;
             kbSize.width += _keyboardDistanceFromTextField;
             break;
         case UIInterfaceOrientationPortrait:
+            kbSize.height = screenRect.size.height - kbFrame.origin.y;
             kbSize.height += _keyboardDistanceFromTextField;
             break;
         case UIInterfaceOrientationPortraitUpsideDown:
+            kbSize.height = screenRect.size.height - kbFrame.origin.y;
             kbSize.height += _keyboardDistanceFromTextField;
             break;
         default:
